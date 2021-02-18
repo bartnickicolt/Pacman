@@ -23,6 +23,7 @@ Pacman agents (in searchAgents.py).
 import util
 import heapq
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -91,46 +92,49 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    Frontier = util.Stack()
-    Visited = []
-    Frontier.push((problem.getStartState(), []))
-    Visited.append(problem.getStartState())
+    fringe = util.Stack()
+    # Make an empty list of explored nodes
+    visited = []
+    # Make an empty list of actions
+    actionList = []
+    # Place the starting point in the stack
+    fringe.push((problem.getStartState(), actionList))
+    while fringe:
+        node, actions = fringe.pop()
+        if not node in visited:
+            visited.append(node)
+            if problem.isGoalState(node):
+                return actions
+            for successor in problem.getSuccessors(node):
+                coordinate, direction, cost = successor
+                nextActions = actions + [direction]
+                fringe.push((coordinate, nextActions))
+    return []
 
-    while Frontier.isEmpty() == 0:
-        state, actions = Frontier.pop()
-
-        for next in problem.getSuccessors(state):
-            nextState = next[0]
-            nextDirection = next[1]
-            if nextState not in Visited:
-                if problem.isGoalState(nextState):
-                    return actions + [nextDirection]
-                else:
-                    Frontier.push((nextState, actions + [nextDirection]))
-                    Visited.append(nextState)
-
-    util.raiseNotDefined()
+    
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    Frontier = util.Queue()
-    Visited = [] 
-    Frontier.push((problem.getStartState(), []))
-
-
-    while Frontier.isEmpty() == 0:
-        state, actions = Frontier.pop()
-
-        for next in problem.getSuccessors(state):
-            nextState = next[0]
-            nextDirection = next[1]
-            if nextState not in Visited:
-                if problem.isGoalState(nextState):
-                    return actions + [nextDirection]
-                Frontier.push((nextState, actions + [nextDirection]))
-                Visited.append(nextState)
-    util.raiseNotDefined()
+    # Use a Queue, so the search explores all nodes on one level before moving to the next level 
+    fringe = util.Queue()
+    # Make an empty list of explored nodes
+    visited = []
+    # Make an empty list of actions
+    actionList = []
+    # Place the starting point in the queue
+    fringe.push((problem.getStartState(), actionList))
+    while fringe:
+        node, actions = fringe.pop()
+        if not node in visited:
+            visited.append(node)
+            if problem.isGoalState(node):
+                return actions
+            for successor in problem.getSuccessors(node):
+                coordinate, direction, cost = successor
+                nextActions = actions + [direction]
+                fringe.push((coordinate, nextActions))
+    return []
 
 def lowestCostFirst(problem):
     """Search the node of least total cost first."""
